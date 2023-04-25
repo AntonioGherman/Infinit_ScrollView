@@ -24,7 +24,11 @@ class LoadingEffect extends StatelessWidget {
                           child: _blankOption(),
                         )
                       ],
-                    )))));
+                    ),
+                ),
+            ),
+        ),
+    );
   }
 
   Row _blankOption() {
