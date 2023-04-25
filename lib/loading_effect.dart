@@ -6,28 +6,28 @@ class LoadingEffect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
-                    child: Column(
-                      children: <Widget>[
-                        _blankBox(context),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-                          child: _blankOption(),
-                        )
-                      ],
-                    ),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
+            child: Column(
+              children: <Widget>[
+                _blankBox(context),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                  child: _blankOption(),
+                )
+              ],
             ),
+          ),
         ),
+      ),
     );
   }
 

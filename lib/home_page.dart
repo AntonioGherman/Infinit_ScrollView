@@ -7,7 +7,6 @@ import 'new_photo_page.dart';
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
-
 }
 
 int _currentIndex = 0;
@@ -32,14 +31,11 @@ class _HomePageState extends State<HomePage> {
           selectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.photo,
-                  color: _currentIndex == 0 ? Colors.blue : null),
+              icon: Icon(Icons.photo, color: _currentIndex == 0 ? Colors.blue : null),
               label: 'New Photo',
-
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.favorite,
-                  color: _currentIndex == 1 ? Colors.redAccent : null),
+              icon: Icon(Icons.favorite, color: _currentIndex == 1 ? Colors.redAccent : null),
               label: 'Favorite photos',
             )
           ],
