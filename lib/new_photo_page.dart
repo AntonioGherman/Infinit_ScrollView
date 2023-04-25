@@ -15,15 +15,14 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
   String _photosLinks = '';
   Color _iconColor = Colors.black12;
   IconData _icon = Icons.favorite_border;
-  List<String> _favoriteImageLink = [''];
+  List<String> _favoriteImageLink = <String>[''];
 
-  // Future<void> _loadImage() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     _favoriteImageLink = prefs.getStringList('links') ?? [''];
-  //     print(_favoriteImageLink);
-  //   });
-  // }
+  Future<void> _loadImage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _favoriteImageLink = prefs.getStringList('links') ?? <String>[''];
+    });
+  }
 
   Future<void> _storeImages(List<String> favoriteImage) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,7 +43,6 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
         final String urlImage = url['full'] as String;
 
         _photosLinks = urlImage;
-        // print(photosLinks);
       });
     }
   }
@@ -91,7 +89,6 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
                 _icon = Icons.favorite;
                 _iconColor = Colors.redAccent;
                 _favoriteImageLink.add(_photosLinks);
-                // print(_favoriteImageLink);
                 _storeImages(_favoriteImageLink);
               } else {
                 _icon = Icons.favorite_border;
@@ -146,7 +143,7 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
   @override
   void initState() {
     apiCall();
-    // _loadImage();
+    _loadImage();
     super.initState();
   }
 }
