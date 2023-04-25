@@ -5,7 +5,7 @@ class LoadingEffect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Center(
+    return Center(
         child: Padding(
             padding: const EdgeInsets.all(20),
             child: Card(
@@ -15,8 +15,7 @@ class LoadingEffect extends StatelessWidget {
                 ),
                 child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).size.height / 3,
+                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
                     child: Column(
                       children: <Widget>[
                         _blankBox(context),
@@ -38,17 +37,13 @@ class LoadingEffect extends StatelessWidget {
         ),
         Container(
           decoration: const BoxDecoration(color: Color(0xFFF4F4F4)),
-          child: const Text(' Add to favorite',
-              style: TextStyle(fontSize: 17, color: Color(0xFFF4F4F4))),
+          child: const Text(' Add to favorite', style: TextStyle(fontSize: 17, color: Color(0xFFF4F4F4))),
         ),
         const Spacer(),
         ElevatedButton(
-          onPressed: () {
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF4F4F4)),
-          child: const Text('New photo',
-              style: TextStyle(color: Color(0xFFF4F4F4))),
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF4F4F4)),
+          child: const Text('New photo', style: TextStyle(color: Color(0xFFF4F4F4))),
         )
       ],
     );
@@ -63,8 +58,7 @@ class LoadingEffect extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             child: Container(
               decoration: const BoxDecoration(color: Color(0xFFF4F4F4)),
-            )
-        ),
+            )),
       ),
     );
   }
