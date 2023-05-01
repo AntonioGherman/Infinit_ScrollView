@@ -12,10 +12,24 @@ class NewPhotoPage extends StatefulWidget {
 }
 
 class _NewPhotoPageState extends State<NewPhotoPage> {
-  String _photosLinks = '';
+  final String _apiKey = '2CMxxZJ5e6lez4zIPjhIpHRgezq49MNJfSLgGnMXlf0';
+  // final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController =ScrollController();
+  final String _categorie = 'star wars';
   Color _iconColor = Colors.black12;
   IconData _icon = Icons.favorite_border;
+  final List<String> _photosLinks = <String>[];
   List<String> _favoriteImageLink = <String>[''];
+  int _page=1;
+  bool _isLoading=false;
+
+  @override
+  void initState() {
+    _loadImage();
+    super.initState();
+    apiCall(_categorie, _page);
+    _scrollController.addListener(_onScroll);
+  }
 
   Future<void> _loadImage() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,55 +45,110 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
     });
   }
 
-  Future<void> apiCall() async {
+  Future<void> apiCall(String? search, int page) async {
+    setState(() {
+      _isLoading=true;
+    });
+    final String query = search ?? _categorie;
+    final http.Client client = http.Client();
+    final Uri uri =
+        Uri.parse('https://api.unsplash.com/search/photos?query=$query&per_page=30&page=$page');
     final http.Response response;
-    response = await http.get(
-        Uri.parse('https://api.unsplash.com/photos/random/?client_id=2CMxxZJ5e6lez4zIPjhIpHRgezq49MNJfSLgGnMXlf0'));
-
+    response = await client.get(uri,
+        headers: <String, String>{'Authorization': 'Client-ID $_apiKey'});
     if (response.statusCode == 200) {
-      final dynamic mapResponse = json.decode(response.body);
+      final Map<String, dynamic> mapResponse =
+          json.decode(response.body) as Map<String, dynamic>;
+      final List<dynamic> result = mapResponse['results'] as List<dynamic>;
       setState(() {
-        final Map<String, dynamic> url = mapResponse['urls'] as Map<String, dynamic>;
-        final String urlImage = url['full'] as String;
-
-        _photosLinks = urlImage;
+        for (final dynamic imageResult in result) {
+          final Map<String, dynamic> image =
+              imageResult as Map<String, dynamic>;
+          final Map<String, dynamic> url =
+              image['urls'] as Map<String, dynamic>;
+          final String urlImage = url['small'] as String;
+          _photosLinks.add(urlImage);
+        }
+        _isLoading=false;
       });
     }
+  }
+
+  void _onScroll(){
+    final double height=MediaQuery.of(context).size.height;
+    final double offset= _scrollController.position.pixels;
+    final double maxScroll= _scrollController.position.maxScrollExtent;
+    if(!_isLoading &&maxScroll - offset < 2*height){
+      ++_page;
+      apiCall(_categorie, _page);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _photosLinks == ''
-          ? const LoadingEffect()
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height / 3,
-                    child: Column(
-                      children: <Widget>[
-                        _imageWidget(context),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-                          child: _option(),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-    );
+        body: _photosLinks.isEmpty
+            ? const LoadingEffect()
+            : GridView.builder(
+          controller: _scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemCount: _photosLinks.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(30, 30, 30, 155),
+                                child: Card(
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height -
+                                        MediaQuery.of(context).size.height / 2,
+                                    child: Column(
+                                      children: <Widget>[
+                                        _imageWidget(context, index),
+                                        Padding(
+                                            padding: const EdgeInsets.all(20),
+                                            child: _option(index))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      child: Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 2,
+                              child: _imageWidget(context, index),
+                            ),
+                            Expanded(child: _option(index))
+                          ]
+                        ),
+                      ));
+                }));
   }
 
-  Row _option() {
+  Row _option(int index) {
     return Row(
       children: <Widget>[
         GestureDetector(
@@ -88,62 +157,50 @@ class _NewPhotoPageState extends State<NewPhotoPage> {
               if (_icon == Icons.favorite_border) {
                 _icon = Icons.favorite;
                 _iconColor = Colors.redAccent;
-                _favoriteImageLink.add(_photosLinks);
+                _favoriteImageLink.add(_photosLinks[index]);
                 _storeImages(_favoriteImageLink);
               } else {
                 _icon = Icons.favorite_border;
                 _iconColor = Colors.black12;
-                _favoriteImageLink.remove(_photosLinks);
+                _favoriteImageLink.remove(_photosLinks[index]);
               }
             });
           },
           child: Icon(
             _icon,
-            size: 39,
             color: _iconColor,
           ),
         ),
-        const Text(' Add to favorite', style: TextStyle(fontSize: 17)),
-        const Spacer(),
-        ElevatedButton(
-            onPressed: () {
-              setState(() {
-                apiCall();
-                _iconColor = Colors.black12;
-                _icon = Icons.favorite_border;
-              });
-            },
-            child: const Text('New photo'))
+        const Text(' Add to favorite'),
+        // const Spacer(),
+        // ElevatedButton(
+        //     onPressed: () {
+        //       setState(() {
+        //         apiCall();
+        //         _iconColor = Colors.black12;
+        //         _icon = Icons.favorite_border;
+        //       });
+        //     },
+        //     child: const Text('New photo'))
       ],
     );
   }
 
-  SizedBox _imageWidget(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height / 2,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.network(_photosLinks, fit: BoxFit.fitHeight, loadingBuilder: _loadingImage),
-        ),
-      ),
+  ClipRRect _imageWidget(BuildContext context, int index) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: Image.network(_photosLinks[index],
+          fit: BoxFit.cover, loadingBuilder: _loadingImage),
     );
   }
 
-  Widget _loadingImage(BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+  Widget _loadingImage(
+      BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
     if (loadingProgress == null) {
       return child;
     }
     return Container(
       decoration: const BoxDecoration(color: Color(0xFFF4F4F4)),
     );
-  }
-
-  @override
-  void initState() {
-    apiCall();
-    _loadImage();
-    super.initState();
   }
 }
