@@ -1,16 +1,9 @@
-# random_photos
+# Random photo App
 
-A new Flutter project.
+Random photo, o aplicatie unde se afiseaza o poza random de la un API de pe unsplash. Utilizatorul o poate salva ca favorita. In sectiunea favorite vor aparea pozele salvate ca si favorite. Prin apasarea lunga a unei imagini utilizatorul are optiunea de a o sterge
 
-## Getting Started
+## Demo
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+https://user-images.githubusercontent.com/110396326/234363300-cd539dd6-0a7b-429f-9cd8-9a3d746a938e.mp4
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
